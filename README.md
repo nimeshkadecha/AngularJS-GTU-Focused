@@ -55,8 +55,18 @@ angular.module('myApp', []);
 ```
 
 ### Example
-```js
-var app = angular.module('storeApp', []);
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <script>
+        var app = angular.module('storeApp', []);
+    </script>
+</body>
+</html>
 ```
 
 ## 2. **Controller**
@@ -73,9 +83,23 @@ angular.module('myApp', [])
 
 ### Example
 ```html
-<div ng-controller="myController">
-    <p>{{ message }}</p>
-</div>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <p>{{ message }}</p>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.message = "Hello, Controller!";
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 3. **Directives**
@@ -90,8 +114,24 @@ angular.module('myApp', [])
 
 ### Example
 ```html
-<input type="button" ng-click="count = count + 1" value="Increment">
-<p>Count: {{ count }}</p>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <input type="text" ng-model="name">
+        <p>Hello, {{ name }}!</p>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.name = "AngularJS";
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 4. **Filters**
@@ -105,7 +145,23 @@ angular.module('myApp', [])
 
 ### Example
 ```html
-<p>{{ 1234.56 | currency }}</p>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <p>{{ message | uppercase }}</p>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.message = "hello world";
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 5. **Services**
@@ -123,12 +179,27 @@ angular.module('myApp', [])
 ```
 
 ### Example
-```js
-app.service('mathService', function() {
-    this.square = function(num) {
-        return num * num;
-    };
-});
+```html
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body ng-controller="myController">
+    <p>{{ message }}</p>
+    <script>
+        angular.module('myApp', [])
+               .service('myService', function() {
+                   this.getMessage = function() {
+                       return "Hello from Service!";
+                   };
+               })
+               .controller('myController', function($scope, myService) {
+                   $scope.message = myService.getMessage();
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 6. **Factory**
@@ -175,9 +246,27 @@ angular.module("myApp", ["ngRoute"])
 
 ### Example
 ```html
-<a href="#/home">Home</a>
-<a href="#/about">About</a>
-<div ng-view></div>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+</head>
+<body>
+    <a href="#/home">Home</a>
+    <a href="#/about">About</a>
+    <div ng-view></div>
+    <script>
+        angular.module("myApp", ["ngRoute"])
+               .config(function($routeProvider) {
+                   $routeProvider
+                   .when("/home", { template : "<h1>Home Page</h1>" })
+                   .when("/about", { template : "<h1>About Page</h1>" })
+                   .otherwise({redirectTo: '/home'});
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 8. **Scope ($scope)**
@@ -191,7 +280,23 @@ $scope.message = "Hello, Scope!";
 
 ### Example
 ```html
-<p>{{ message }}</p>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <p>{{ message }}</p>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.message = "Hello, AngularJS!";
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 9. **Expressions ({{ }})**
@@ -205,7 +310,23 @@ $scope.message = "Hello, Scope!";
 
 ### Example
 ```html
-<p>{{ user.name }}</p>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <p>{{ 5 + 5 }}</p>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.user = { name: "AngularJS User" };
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 10. **Templates**
@@ -221,8 +342,21 @@ $scope.message = "Hello, Scope!";
 
 ### Example
 ```html
-<div ng-include="'myTemplate.html'"></div>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-include="'template.html'"></div>
+    <script>
+        angular.module('myApp', []);
+    </script>
+</body>
+</html>
 ```
+`template.html`
+``` <h1>My Template</h1> ```
 
 ## 11. **Events (ng-click, ng-change)**
 ### Explanation
@@ -234,10 +368,26 @@ $scope.message = "Hello, Scope!";
 ```
 
 ### Example
-```js
-$scope.sayHello = function() {
-    alert("Hello!");
-};
+```html
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <button ng-click="sayHello()">Click Me</button>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.sayHello = function() {
+                       alert("Hello!");
+                   };
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 12. **Form Validation**
@@ -251,10 +401,26 @@ $scope.sayHello = function() {
 
 ### Example
 ```html
-<form name="myForm">
-    <input type="email" name="userEmail" ng-model="email" required>
-    <span ng-show="myForm.userEmail.$error.required">Email is required.</span>
-</form>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <form name="myForm">
+            <input type="email" name="userEmail" ng-model="email" required>
+            <span ng-show="myForm.userEmail.$error.required">Email is required.</span>
+        </form>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.email = "";
+               });
+    </script>
+</body>
+</html>
 ```
 
 ## 13. **Dependency Injection**
@@ -288,7 +454,23 @@ app.controller('MainCtrl', function($scope, dataFactory) {
 
 ### Example
 ```html
-<input type="checkbox" ng-model="checked">
-<p>Checked: {{ checked }}</p>
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+<body>
+    <div ng-controller="myController">
+        <input type="text" ng-model="name">
+        <p>{{ name }}</p>
+    </div>
+    <script>
+        angular.module('myApp', [])
+               .controller('myController', function($scope) {
+                   $scope.name = "";
+               });
+    </script>
+</body>
+</html>
 ```
 
