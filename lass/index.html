@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  </head>
+  <body>
+    <div ng-controller="MainController">
+      <!-- Expressions -->
+      <p>{{ 5 + 5 }}</p>
+      <p>{{ user.name }}</p>
+
+      <!-- Templates -->
+      <div ng-include="'template.html'"></div>
+
+      <!-- Events -->
+      <button ng-click="sayHello()">Click Me</button>
+
+      <!-- Form Validation -->
+      <form name="myForm">
+        <input type="email" name="userEmail" ng-model="email" required />
+        <span ng-show="myForm.userEmail.$error.required"
+          >Email is required.</span
+        >
+      </form>
+
+      <!-- Two-way Data Binding -->
+      <input type="text" ng-model="name" />
+      <p>{{ name }}</p>
+    </div>
+
+    <script>
+      var app = angular.module("myApp", []);
+
+      app.controller("MainController", function ($scope) {
+        $scope.user = { name: "AngularJS User" };
+        $scope.sayHello = function () {
+          alert("Hello!");
+        };
+        $scope.email = "";
+        $scope.name = "";
+      });
+    </script>
+  </body>
+</html>

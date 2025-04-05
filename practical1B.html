@@ -1,0 +1,46 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {margin:0; font-family:sans-serif; display:flex;
+            justify-content:center; align-items:center; height:100vh;
+            background:#f0f8ff;}
+        form {max-width:400px; width:100%; padding:20px; box-sizing:border-box;
+            border:1px solid #ccc; border-radius:5px; background:#fff; min-width:350px}
+        @media(min-width:800px){form { max-width:600px; }}
+        label {display:block; margin-top:10px; }
+        input, select {width:100%; padding:8px; margin-top:5px; box-sizing:border-box}
+        button {margin-top:15px; padding:10px 15px; cursor:pointer;border:none; border-radius:3px;}
+        button[type="submit"] { background:#2196F3; color:#fff; }
+        button[type="reset"]  { background:#f5f5f5; margin-right:10px; }
+        input[type="radio"], input[type="checkbox"] {
+            margin-right:3px; accent-color:#2196F3; transform:scale(1.2); cursor:pointer;}
+        .inline-group {display:flex; align-items:center; gap:5px;}
+    </style>
+</head>
+<body>
+    <form>
+        <label>Name</label>
+        <input type="text" placeholder="Enter Name" id="name" required>
+        <label>Email</label>
+        <input type="email" placeholder="Enter Email" id="email" required>
+        <label>Mobile Number</label>
+        <input type="tel" placeholder="Enter Mobile" id="mob" required>
+        <label>Address</label>
+        <input type="text" placeholder="Enter Address" id="address">
+        <label>Enrolment</label>
+        <input type="text" placeholder="Enter Enrolment" id="enrol">
+        <label>Department</label>
+        <select required>
+            <option value="">Select</option>
+            <option value="IT">IT</option>
+            <option value="CE">CE</option>
+            <option value="ME">ME</option>
+            <option value="EC">EC</option>
+            <option value="EE">EE</option>
+        </select>
+        <button type="reset">Clear</button>
+        <button type="" class="sub">Submit</button>
+    </form>
+</body>
+</html>
