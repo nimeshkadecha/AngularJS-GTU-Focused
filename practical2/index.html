@@ -52,12 +52,10 @@
         );
       }
 
-      /* Section headings */
+      /* Section headings - keeping custom underline effect */
       h2 {
         color: var(--secondary);
-        font-weight: bold;
         position: relative;
-        padding-bottom: 0.75rem;
       }
 
       h2::after {
@@ -70,7 +68,7 @@
         background: var(--accent);
       }
 
-      /* Animation */
+      /* Animation - Bootstrap doesn't have equivalent */
       @keyframes fadeInUp {
         from {
           transform: translateY(30px);
@@ -716,17 +714,24 @@
 
       function createSection(title, items) {
         const section = document.createElement("section");
-        section.innerHTML = `<h2 class="fadeInUp">${title}</h2>`;
+        section.className = "mb-4";
+        section.innerHTML = `<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">${title}</h2>`;
 
         if (Array.isArray(items)) {
           const list = document.createElement("ul");
-          list.innerHTML = items.map((item) => `<li>${item}</li>`).join("");
+          list.className = "list-group list-group-flush";
+          list.innerHTML = items.map((item) => `<li class="list-group-item border-0 bg-transparent">${item}</li>`).join("");
           section.appendChild(list);
         } else {
-          section.innerHTML += `<p>${items}</p>`;
+          const paragraph = document.createElement("p");
+          paragraph.className = "lead";
+          paragraph.textContent = items;
+          section.innerHTML += paragraph.outerHTML;
         }
 
-        section.appendChild(document.createElement("hr"));
+        const hr = document.createElement("hr");
+        hr.className = "my-4";
+        section.appendChild(hr);
         return section;
       }
 
