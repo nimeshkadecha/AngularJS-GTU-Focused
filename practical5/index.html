@@ -1,831 +1,222 @@
-<!DOCTYPE html>
-<html lang="en" ng-app="myApp">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Portfolio</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-    <style>
-      :root {
-        --mouseX: 50%;
-        --mouseY: 50%;
-        --primary: #2563eb;
-        --secondary: #1e293b;
-        --accent: #06b6d4;
-        --light: #f8fafc;
-        --dark: #0f172a;
-        --text: #334155;
-      }
-      body {
-        background: radial-gradient(
-            circle at var(--mouseX) var(--mouseY),
-            rgba(6, 182, 212, 0.15),
-            transparent 80%
-          ),
-          linear-gradient(to right, #f1f5f9, #e2e8f0);
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        color: var(--text);
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      }
-      .hero {
-        background: linear-gradient(135deg, var(--secondary), var(--dark));
-      }
-      .hero::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(
-          circle at 50% 50%,
-          rgba(6, 182, 212, 0.2) 0%,
-          transparent 50%
-        );
-      }
-      h2 {
-        color: var(--secondary);
-        position: relative;
-      }
-      h2::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        height: 3px;
-        width: 80px;
-        background: var(--accent);
-      }
-      @keyframes fadeInUp {
-        from {
-          transform: translateY(30px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-      .fadeInUp {
-        animation: fadeInUp 0.6s ease-out forwards;
-      }
-      .stagger-item {
-        opacity: 0;
-      }
-      .hero-image-container {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin: 0 auto 1.5rem;
-        border: 3px solid rgba(255, 255, 255, 0.2);
-      }
-      .hero-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .social-links {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-        justify-content: center;
-      }
-      .social-links a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.15);
-        color: var(--light);
-        transition: all 0.3s ease;
-        backdrop-filter: blur(2px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .social-links a:hover {
-        background-color: var(--accent);
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      }
-      .social-links svg {
-        width: 20px;
-        height: 20px;
-      }
-      .card {
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        border: none;
-        border-left: 4px solid var(--primary);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        background-color: var(--light);
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        overflow: hidden;
-      }
-      .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      .card-projects {
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        height: 100%;
-        border-left: 4px solid var(--accent);
-        background-color: var(--light);
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        margin-bottom: 0;
-        display: flex;
-        flex-direction: column;
-      }
-      .card-projects:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      .project-content {
-        padding: 1.5rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-      .project-title {
-        font-size: 1.25rem;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-        color: var(--secondary);
-        font-weight: bold;
-      }
-      .project-carousel {
-        position: relative;
-        overflow: hidden;
-        aspect-ratio: 16/9;
-        max-height: 200px;
-        background-color: rgba(0, 0, 0, 0.04);
-      }
-      .project-carousel-inner {
-        display: flex;
-        transition: transform 0.5s ease;
-        height: 100%;
-      }
-      .project-carousel-item {
-        min-width: 100%;
-        flex: 0 0 100%;
-        height: 100%;
-      }
-      .project-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .carousel-controls {
-        position: absolute;
-        bottom: 10px;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: center;
-        gap: 0.25rem;
-      }
-      .carousel-indicator {
-        width: 8px;
-        height: 8px;
-        background-color: rgba(255, 255, 255, 0.5);
-        border-radius: 50%;
-        cursor: pointer;
-      }
-      .carousel-indicator.active {
-        background-color: var(--light);
-      }
-      .carousel-prev,
-      .carousel-next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0, 0, 0, 0.3);
-        color: #fff;
-        border: none;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      .project-carousel:hover .carousel-prev,
-      .project-carousel:hover .carousel-next {
-        opacity: 1;
-      }
-      .carousel-prev {
-        left: 10px;
-      }
-      .carousel-next {
-        right: 10px;
-      }
-      .tech-badges {
-        margin-bottom: 0.75rem;
-      }
-      .tech-badge {
-        display: inline-block;
-        background-color: var(--accent);
-        color: var(--light);
-        border-radius: 4px;
-        font-size: 0.8rem;
-        padding: 0.35rem 0.5rem;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      .project-description {
-        margin-top: auto;
-      }
-      .github-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background-color: var(--dark);
-        color: var(--light);
-        text-decoration: none;
-        border-radius: 0.25rem;
-        transition: all 0.2s ease;
-        width: fit-content;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.9rem;
-        margin-top: 1rem;
-      }
-      .github-btn:hover {
-        background-color: var(--accent);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      .github-btn svg {
-        width: 16px;
-        height: 16px;
-      }
-      .projects-grid {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 1.5rem;
-      }
-      @media (min-width: 768px) {
-        .projects-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (min-width: 992px) {
-        .projects-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-      .certifications-grid {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 1.5rem;
-      }
-      @media (min-width: 768px) {
-        .certifications-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (min-width: 992px) {
-        .certifications-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-      .cert-card {
-        background-color: var(--light);
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        height: 100%;
-        border-left: 4px solid var(--primary);
-      }
-      .cert-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      .cert-image-container {
-        position: relative;
-        width: 100%;
-        padding-top: 56.25%;
-        overflow: hidden;
-        background-color: rgba(0, 0, 0, 0.04);
-        max-height: 180px;
-      }
-      .cert-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
-      .cert-placeholder-icon {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 30%;
-        height: 30%;
-        opacity: 0.3;
-      }
-      .cert-content {
-        padding: 1.25rem;
-      }
-      .cert-title {
-        font-size: 1.15rem;
-        font-weight: bold;
-        color: var(--secondary);
-        margin-bottom: 0.5rem;
-      }
-      .cert-issuer {
-        font-size: 0.9rem;
-        color: var(--text);
-        opacity: 0.8;
-        margin-bottom: 0.5rem;
-      }
-      .cert-date {
-        font-size: 0.85rem;
-        color: var(--accent);
-        font-weight: 500;
-      }
-      .skills-grid {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 1.25rem;
-      }
-      @media (min-width: 768px) {
-        .skills-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      .skill-item {
-        background-color: var(--light);
-        border-radius: 8px;
-        padding: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        border-left: 3px solid var(--accent);
-      }
-      .skill-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-        align-items: center;
-      }
-      .skill-name {
-        font-weight: 600;
-        color: var(--secondary);
-      }
-      .skill-level {
-        font-size: 0.85rem;
-        color: var(--text);
-        opacity: 0.8;
-        font-weight: 500;
-      }
-      .skill-bar {
-        height: 8px;
-        background-color: rgba(0, 0, 0, 0.05);
-        border-radius: 4px;
-        overflow: hidden;
-        margin-top: 0.5rem;
-      }
-      .skill-progress {
-        height: 100%;
-        border-radius: 4px;
-        width: 0;
-        transition: width 1s ease-out;
-      }
-      .skill-progress.beginner {
-        background-color: #38bdf8;
-        width: 25%;
-      }
-      .skill-progress.intermediate {
-        background-color: #22d3ee;
-        width: 50%;
-      }
-      .skill-progress.advanced {
-        background-color: #06b6d4;
-        width: 85%;
-      }
-      .skill-progress.expert {
-        background-color: #0284c7;
-        width: 100%;
-      }
-      .education-grid {
-        display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 1.25rem;
-      }
-      @media (min-width: 768px) {
-        .education-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      .education-card {
-        background-color: var(--light);
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        height: 100%;
-        display: flex;
-        border-left: 4px solid var(--secondary);
-      }
-      .education-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      .education-logo {
-        width: 70px;
-        height: 70px;
-        min-width: 70px;
-        margin: 1.25rem 0 1.25rem 1.25rem;
-        background-color: rgba(37, 99, 235, 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary);
-        font-size: 1.5rem;
-        font-weight: bold;
-      }
-      .education-logo img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 50%;
-      }
-      .education-content {
-        padding: 1.25rem;
-        flex: 1;
-      }
-      .education-degree {
-        font-size: 1.15rem;
-        font-weight: bold;
-        color: var(--secondary);
-        margin-bottom: 0.4rem;
-      }
-      .education-institution {
-        font-size: 0.95rem;
-        color: var(--text);
-        margin-bottom: 0.4rem;
-      }
-      .education-date {
-        font-size: 0.85rem;
-        color: var(--accent);
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-      }
-      .education-date svg {
-        width: 0.9rem;
-        height: 0.9rem;
-      }
-      .education-location {
-        font-size: 0.85rem;
-        color: var(--text);
-        opacity: 0.7;
-        margin-top: 0.3rem;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-      }
-      .education-location svg {
-        width: 0.9rem;
-        height: 0.9rem;
-      }
-    </style>
-  </head>
-  <body ng-controller="MainController">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">My Portfolio</a>
-      </div>
-    </nav>
-
-    <div
-      class="hero py-5 text-center position-relative overflow-hidden text-light"
-    >
-      <div class="container">
-        <div class="hero-image-container" ng-if="portfolio.personal.image">
-          <img
-            class="hero-image"
-            ng-src="{{portfolio.personal.image}}"
-            alt="{{portfolio.personal.name}}"
-          />
-        </div>
-        <h1>{{portfolio.personal.title}}</h1>
-        <p>{{portfolio.personal.description}}</p>
-        <p>{{portfolio.personal.about}}</p>
-        <div class="social-links">
-          <a
-            ng-if="portfolio.personal.social.github"
-            ng-href="{{portfolio.personal.social.github}}"
-            target="_blank"
-            title="GitHub"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M12 0c-6.627 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.089-.744.083-.729.083-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.775.418-1.305.762-1.605-2.665-.303-5.466-1.332-5.466-5.93 0-1.31.468-2.381 1.235-3.221-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.241 2.873.118 3.176.77.84 1.233 1.911 1.233 3.221 0 4.61-2.805 5.625-5.475 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .322.218.694.825.576 4.765-1.587 8.198-6.084 8.198-11.386 0-6.627-5.373-12-12-12z"
-              />
-            </svg>
-          </a>
-          <a
-            ng-if="portfolio.personal.social.linkedin"
-            ng-href="{{portfolio.personal.social.linkedin}}"
-            target="_blank"
-            title="LinkedIn"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.027-3.063-1.867-3.063-1.869 0-2.156 1.459-2.156 2.968v5.699h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.039 0 3.604 2 3.604 4.604v5.592z"
-              />
-            </svg>
-          </a>
-          <a
-            ng-if="portfolio.personal.social.leetcode"
-            ng-href="{{portfolio.personal.social.leetcode}}"
-            target="_blank"
-            title="LeetCode"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M22 14.355c0-0.742-0.611-1.353-1.353-1.353-0.742 0-1.353 0.611-1.353 1.353 0 0.742 0.611 1.353 1.353 1.353 0.742 0 1.353-0.611 1.353-1.353zM20.647 14.355c0-0.371-0.3-0.671-0.671-0.671-0.371 0-0.671 0.3-0.671 0.671 0 0.371 0.3 0.671 0.671 0.671 0.371 0 0.671-0.3 0.671-0.671z"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="container my-5">
-      <!-- Summary Section -->
-      <section ng-if="portfolio.summary">
-        <h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Summary</h2>
-        <ul class="list-group list-group-flush">
-          <li
-            class="list-group-item border-0 bg-transparent"
-            ng-repeat="item in portfolio.summary"
-          >
-            {{item}}
-          </li>
-        </ul>
-        <hr class="my-4" />
-      </section>
-
-      <!-- Experience Section -->
-      <section ng-if="portfolio.experience">
-        <h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">
-          Professional Experience
-        </h2>
-        <div class="card my-3" ng-repeat="exp in portfolio.experience">
-          <div class="card-body">
-            <h5 class="card-title">{{exp.role}}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">
-              {{exp.company}} | {{exp.period}}
-            </h6>
-            <p class="card-text text-muted"><i>{{exp.location}}</i></p>
-            <ul>
-              <li ng-repeat="detail in exp.details">{{detail}}</li>
-            </ul>
-          </div>
-        </div>
-        <hr class="my-4" />
-      </section>
-
-      <!-- Projects Section -->
-      <section ng-if="portfolio.projects">
-        <h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Projects</h2>
-        <div class="projects-grid">
-          <div class="card-projects" ng-repeat="project in portfolio.projects">
-            <div
-              class="project-carousel"
-              ng-if="project.images && project.images.length > 0"
-            >
-              <div
-                class="project-carousel-inner"
-                ng-style="{'transform': 'translateX(-' + (currentSlide[$index] || 0) * 100 + '%)'}"
-              >
-                <div
-                  class="project-carousel-item"
-                  ng-repeat="image in project.images"
-                >
-                  <img
-                    class="project-image"
-                    ng-src="{{image}}"
-                    alt="{{project.title}} image {{$index + 1}}"
-                  />
-                </div>
-              </div>
-              <button
-                class="carousel-prev"
-                ng-click="prevSlide($index)"
-                ng-if="project.images.length > 1"
-              >
-                &lt;
-              </button>
-              <button
-                class="carousel-next"
-                ng-click="nextSlide($index, project.images.length)"
-                ng-if="project.images.length > 1"
-              >
-                &gt;
-              </button>
-            </div>
-            <div class="project-content">
-              <h5 class="project-title">{{project.title}}</h5>
-              <div class="tech-badges" ng-if="project.technologies">
-                <span
-                  class="tech-badge"
-                  ng-repeat="tech in project.technologies.split(',')"
-                  >{{tech.trim()}}</span
-                >
-              </div>
-              <p class="project-description">{{project.description}}</p>
-              <a
-                ng-if="project.github"
-                ng-href="{{project.github}}"
-                class="github-btn"
-                target="_blank"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                >
-                  <path d="M12 0c-6.626..."></path>
-                </svg>
-                View on GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-        <hr class="my-4" />
-      </section>
-
-      <!-- Certifications Section -->
-      <section ng-if="portfolio.certifications">
-        <h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">
-          Certifications
-        </h2>
-        <div class="certifications-grid">
-          <div class="cert-card" ng-repeat="cert in portfolio.certifications">
-            <div class="cert-image-container">
-              <img
-                class="cert-image"
-                ng-src="{{cert.image}}"
-                alt="{{cert.title}}"
-              />
-            </div>
-            <div class="cert-content">
-              <div class="cert-title">
-                {{cert.title}}
-                <span ng-if="cert.achievement">({{cert.achievement}})</span>
-              </div>
-              <div class="cert-issuer">{{cert.issuer}}</div>
-              <div class="cert-date">{{cert.date}}</div>
-              <ul>
-                <li ng-repeat="detail in cert.details">{{detail}}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <hr class="my-4" />
-      </section>
-
-      <!-- Skills Section -->
-      <section ng-if="portfolio.skills">
-        <h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Skills</h2>
-        <div class="skills-grid">
-          <div class="skill-item" ng-repeat="skill in portfolio.skills">
-            <div class="skill-header">
-              <div class="skill-name">{{skill.name}}</div>
-              <div class="skill-level">{{skill.level}}</div>
-            </div>
-            <div class="skill-bar">
-              <div
-                class="skill-progress"
-                ng-class="skill.level.toLowerCase()"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <hr class="my-4" />
-      </section>
-
-      <!-- Education Section -->
-      <section ng-if="portfolio.education">
-        <h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Education</h2>
-        <div class="education-grid">
-          <div class="education-card" ng-repeat="edu in portfolio.education">
-            <div class="education-logo" ng-if="edu.logo">
-              <img ng-src="{{edu.logo}}" alt="{{edu.institution}}" />
-            </div>
-            <div class="education-content">
-              <div class="education-degree">{{edu.degree || edu.level}}</div>
-              <div class="education-institution">{{edu.institution}}</div>
-              <div class="education-date">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"
-                  />
-                  <path
-                    d="M4.285 12.433a.5.5 0 0 1-.57-.82l4.5-3.5a.5.5 0 0 1 .57 0l4.5 3.5a.5.5 0 0 1-.57.82L8 9.07l-3.715 2.863z"
-                  />
-                </svg>
-                {{edu.duration || edu.period}}
-              </div>
-              <div class="education-location" ng-if="edu.location">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M8 0a5.53 5.53 0 0 0-5.5 5.5c0 3.038 5.5 10.5 5.5 10.5s5.5-7.462 5.5-10.5A5.53 5.53 0 0 0 8 0zM8 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"
-                  />
-                </svg>
-                {{edu.location}}
-              </div>
-              <ul>
-                <li ng-repeat="achievement in edu.achievements">
-                  {{achievement}}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <hr class="my-4" />
-      </section>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="data.js"></script>
-    <script>
-      const app = angular.module("myApp", []);
-
-      app.controller("MainController", function ($scope) {
-        $scope.portfolio = portfolioData;
-
-        // Track the current slide for each project
-        $scope.currentSlide = [];
-
-        // Navigate to the previous slide
-        $scope.prevSlide = function (projectIndex) {
-          if (!$scope.currentSlide[projectIndex]) {
-            $scope.currentSlide[projectIndex] = 0;
-          }
-          $scope.currentSlide[projectIndex] =
-            ($scope.currentSlide[projectIndex] -
-              1 +
-              $scope.portfolio.projects[projectIndex].images.length) %
-            $scope.portfolio.projects[projectIndex].images.length;
-        };
-
-        // Navigate to the next slide
-        $scope.nextSlide = function (projectIndex, totalSlides) {
-          if (!$scope.currentSlide[projectIndex]) {
-            $scope.currentSlide[projectIndex] = 0;
-          }
-          $scope.currentSlide[projectIndex] =
-            ($scope.currentSlide[projectIndex] + 1) % totalSlides;
-        };
-
-        // Mouse movement effect for radial gradient
-        document.addEventListener("mousemove", (event) => {
-          const mouseX = (event.clientX / window.innerWidth) * 100 + "%";
-          const mouseY = (event.clientY / window.innerHeight) * 100 + "%";
-          document.documentElement.style.setProperty("--mouseX", mouseX);
-          document.documentElement.style.setProperty("--mouseY", mouseY);
-        });
-      });
-    </script>
-  </body>
+<html ng-app="myApp"><head> <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Portfolio</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script><style>
+:root{--mouseX:50%;--mouseY:50%;--primary:#2563eb;--secondary:#1e293b;--accent:#06b6d4;--light:#f8fafc;--dark:#0f172a;--text:#334155}
+body{background:radial-gradient(circle at var(--mouseX) var(--mouseY),rgba(6,182,212,0.15),transparent 80%),linear-gradient(to right,#f1f5f9,#e2e8f0);background-repeat:no-repeat;background-attachment:fixed;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.hero{background:linear-gradient(135deg,var(--secondary),var(--dark))}
+.hero::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 50% 50%,rgba(6,182,212,0.2) 0%,transparent 50%)}
+h2{color:var(--secondary);position:relative}
+h2::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:80px;background:var(--accent)}
+@keyframes fadeInUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.fadeInUp{animation:fadeInUp 0.6s ease-out forwards}
+.stagger-item{opacity:0}
+.hero-image-container{width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 1.5rem;border:3px solid rgba(255,255,255,0.2)}
+.hero-image{width:100%;height:100%;object-fit:cover}
+.social-links{display:flex;gap:1rem;margin-top:1rem;justify-content:center}
+.social-links a{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background-color:rgba(255,255,255,0.15);color:var(--light);transition:all 0.3s ease;backdrop-filter:blur(2px);border:1px solid rgba(255,255,255,0.1)}
+.social-links a:hover{background-color:var(--accent);transform:translateY(-3px);box-shadow:0 5px 15px rgba(0,0,0,0.2)}
+.social-links svg{width:20px;height:20px}
+.card{transition:all 0.3s cubic-bezier(0.16,1,0.3,1);border:none;border-left:4px solid var(--primary);box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);background-color:var(--light);border-radius:8px;margin-bottom:1.5rem;overflow:hidden}
+.card:hover{transform:translateY(-5px);box-shadow:0 10px 15px -3px rgba(0,0,0,0.1)}
+.card-projects{transition:all 0.3s cubic-bezier(0.16,1,0.3,1);height:100%;border-left:4px solid var(--accent);background-color:var(--light);border-radius:8px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);margin-bottom:0;display:flex;flex-direction:column}
+.card-projects:hover{transform:translateY(-5px);box-shadow:0 10px 15px -3px rgba(0,0,0,0.1)}
+.project-content{padding:1.5rem;flex:1;display:flex;flex-direction:column}
+.project-title{font-size:1.25rem;margin-top:0.5rem;margin-bottom:0.5rem;color:var(--secondary);font-weight:bold}
+.project-carousel{position:relative;overflow:hidden;aspect-ratio:16/9;max-height:200px;background-color:rgba(0,0,0,0.04)}
+.project-carousel-inner{display:flex;transition:transform 0.5s ease;height:100%}
+.project-carousel-item{min-width:100%;flex:0 0 100%;height:100%}
+.project-image{width:100%;height:100%;object-fit:cover}
+.carousel-controls{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:0.25rem}
+.carousel-indicator{width:8px;height:8px;background-color:rgba(255,255,255,0.5);border-radius:50%;cursor:pointer}
+.carousel-indicator.active{background-color:var(--light)}
+.carousel-prev,.carousel-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.3);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity 0.3s ease}
+.project-carousel:hover .carousel-prev,.project-carousel:hover .carousel-next{opacity:1}
+.carousel-prev{left:10px}.carousel-next{right:10px}
+.tech-badges{margin-bottom:0.75rem}
+.tech-badge{display:inline-block;background-color:var(--accent);color:var(--light);border-radius:4px;font-size:0.8rem;padding:0.35rem 0.5rem;margin-right:0.5rem;margin-bottom:0.5rem}
+.project-description{margin-top:auto}
+.github-btn{display:inline-flex;align-items:center;gap:0.5rem;background-color:var(--dark);color:var(--light);text-decoration:none;border-radius:0.25rem;transition:all 0.2s ease;width:fit-content;padding:0.5rem 0.75rem;font-size:0.9rem;margin-top:1rem}
+.github-btn:hover{background-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.1)}
+.github-btn svg{width:16px;height:16px}
+.projects-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:1.5rem}
+@media(min-width:768px){.projects-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:992px){.projects-grid{grid-template-columns:repeat(3,1fr)}}
+.certifications-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:1.5rem}
+@media(min-width:768px){.certifications-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:992px){.certifications-grid{grid-template-columns:repeat(3,1fr)}}
+.cert-card{background-color:var(--light);border-radius:8px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);transition:all 0.3s ease;height:100%;border-left:4px solid var(--primary)}
+.cert-card:hover{transform:translateY(-5px);box-shadow:0 10px 15px -3px rgba(0,0,0,0.1)}
+.cert-image-container{position:relative;width:100%;padding-top:56.25%;overflow:hidden;background-color:rgba(0,0,0,0.04);max-height:180px}
+.cert-image{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain}
+.cert-placeholder-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30%;height:30%;opacity:0.3}
+.cert-content{padding:1.25rem}
+.cert-title{font-size:1.15rem;font-weight:bold;color:var(--secondary);margin-bottom:0.5rem}
+.cert-issuer{font-size:0.9rem;color:var(--text);opacity:0.8;margin-bottom:0.5rem}
+.cert-date{font-size:0.85rem;color:var(--accent);font-weight:500}
+.skills-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:1.25rem}
+@media(min-width:768px){.skills-grid{grid-template-columns:repeat(2,1fr)}}
+.skill-item{background-color:var(--light);border-radius:8px;padding:1rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);border-left:3px solid var(--accent)}
+.skill-header{display:flex;justify-content:space-between;margin-bottom:0.5rem;align-items:center}
+.skill-name{font-weight:600;color:var(--secondary)}
+.skill-level{font-size:0.85rem;color:var(--text);opacity:0.8;font-weight:500}
+.skill-bar{height:8px;background-color:rgba(0,0,0,0.05);border-radius:4px;overflow:hidden;margin-top:0.5rem}
+.skill-progress{height:100%;border-radius:4px;width:0;transition:width 1s ease-out}
+.skill-progress.beginner{background-color:#38bdf8;width:25%}
+.skill-progress.intermediate{background-color:#22d3ee;width:50%}
+.skill-progress.advanced{background-color:#06b6d4;width:85%}
+.skill-progress.expert{background-color:#0284c7;width:100%}
+.education-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:1.25rem}
+@media(min-width:768px){.education-grid{grid-template-columns:repeat(2,1fr)}}
+.education-card{background-color:var(--light);border-radius:8px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);transition:all 0.3s ease;height:100%;display:flex;border-left:4px solid var(--secondary)}
+.education-card:hover{transform:translateY(-5px);box-shadow:0 10px 15px -3px rgba(0,0,0,0.1)}
+.education-logo{width:70px;height:70px;min-width:70px;margin:1.25rem 0 1.25rem 1.25rem;background-color:rgba(37,99,235,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:1.5rem;font-weight:bold}
+.education-logo img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.education-content{padding:1.25rem;flex:1}
+.education-degree{font-size:1.15rem;font-weight:bold;color:var(--secondary);margin-bottom:0.4rem}
+.education-institution{font-size:0.95rem;color:var(--text);margin-bottom:0.4rem}
+.education-date{font-size:0.85rem;color:var(--accent);font-weight:500;display:flex;align-items:center;gap:0.35rem}
+.education-date svg{width:0.9rem;height:0.9rem}
+.education-location{font-size:0.85rem;color:var(--text);opacity:0.7;margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem}
+.education-location svg{width:0.9rem;height:0.9rem}
+</style>
+</head>
+<body ng-controller="MainController">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+<div class="container-fluid"><a class="navbar-brand" href="#">My Portfolio</a></div>
+</nav>
+<div class="hero py-5 text-center position-relative overflow-hidden text-light">
+<div class="container">
+<div class="hero-image-container" ng-if="portfolio.personal.image">
+<img class="hero-image" ng-src="{{portfolio.personal.image}}" alt="{{portfolio.personal.name}}"/>
+</div>
+<h1>{{portfolio.personal.title}}</h1>
+<p>{{portfolio.personal.description}}</p>
+<p>{{portfolio.personal.about}}</p>
+<div class="social-links">
+<a ng-if="portfolio.personal.social.github" ng-href="{{portfolio.personal.social.github}}" target="_blank" title="GitHub">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.757-1.333-1.757-1.089-.744.083-.729.083-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.807 1.305 3.492.998.108-.775.418-1.305.762-1.605-2.665-.303-5.466-1.332-5.466-5.93 0-1.31.468-2.381 1.235-3.221-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.241 2.873.118 3.176.77.84 1.233 1.911 1.233 3.221 0 4.61-2.805 5.625-5.475 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .322.218.694.825.576 4.765-1.587 8.198-6.084 8.198-11.386 0-6.627-5.373-12-12-12z"/></svg>
+</a>
+<a ng-if="portfolio.personal.social.linkedin" ng-href="{{portfolio.personal.social.linkedin}}" target="_blank" title="LinkedIn">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.027-3.063-1.867-3.063-1.869 0-2.156 1.459-2.156 2.968v5.699h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.039 0 3.604 2 3.604 4.604v5.592z"/></svg>
+</a>
+<a ng-if="portfolio.personal.social.leetcode" ng-href="{{portfolio.personal.social.leetcode}}" target="_blank" title="LeetCode">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M22 14.355c0-0.742-0.611-1.353-1.353-1.353-0.742 0-1.353 0.611-1.353 1.353 0 0.742 0.611 1.353 1.353 1.353 0.742 0 1.353-0.611 1.353-1.353zM20.647 14.355c0-0.371-0.3-0.671-0.671-0.671-0.371 0-0.671 0.3-0.671 0.671 0 0.371 0.3 0.671 0.671 0.671 0.371 0 0.671-0.3 0.671-0.671z"/></svg>
+</a>
+</div>
+</div>
+</div>
+<div class="container my-5">
+<!-- Summary Section -->
+<section ng-if="portfolio.summary">
+<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Summary</h2>
+<ul class="list-group list-group-flush">
+<li class="list-group-item border-0 bg-transparent" ng-repeat="item in portfolio.summary">{{item}}</li>
+</ul>
+<hr class="my-4"/>
+</section>
+<!-- Experience Section -->
+<section ng-if="portfolio.experience">
+<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Professional Experience</h2>
+<div class="card my-3" ng-repeat="exp in portfolio.experience">
+<div class="card-body">
+<h5 class="card-title">{{exp.role}}</h5>
+<h6 class="card-subtitle mb-2 text-muted">{{exp.company}} | {{exp.period}}</h6>
+<p class="card-text text-muted"><i>{{exp.location}}</i></p>
+<ul><li ng-repeat="detail in exp.details">{{detail}}</li></ul>
+</div>
+</div>
+<hr class="my-4"/>
+</section>
+<!-- Projects Section -->
+<section ng-if="portfolio.projects">
+<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Projects</h2>
+<div class="projects-grid">
+<div class="card-projects" ng-repeat="project in portfolio.projects">
+<div class="project-carousel" ng-if="project.images && project.images.length > 0">
+<div class="project-carousel-inner" ng-style="{'transform': 'translateX(-' + (currentSlide[$index] || 0) * 100 + '%)'}">
+<div class="project-carousel-item" ng-repeat="image in project.images">
+<img class="project-image" ng-src="{{image}}" alt="{{project.title}} image {{$index + 1}}"/>
+</div>
+</div>
+<button class="carousel-prev" ng-click="prevSlide($index)" ng-if="project.images.length > 1">&lt;</button>
+<button class="carousel-next" ng-click="nextSlide($index, project.images.length)" ng-if="project.images.length > 1">&gt;</button>
+</div>
+<div class="project-content">
+<h5 class="project-title">{{project.title}}</h5>
+<div class="tech-badges" ng-if="project.technologies">
+<span class="tech-badge" ng-repeat="tech in project.technologies.split(',')">{{tech.trim()}}</span>
+</div>
+<p class="project-description">{{project.description}}</p>
+<a ng-if="project.github" ng-href="{{project.github}}" class="github-btn" target="_blank">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"><path d="M12 0c-6.626..."></path></svg> View on GitHub
+</a>
+</div>
+</div>
+</div>
+<hr class="my-4"/>
+</section>
+<!-- Certifications Section -->
+<section ng-if="portfolio.certifications">
+<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Certifications</h2>
+<div class="certifications-grid">
+<div class="cert-card" ng-repeat="cert in portfolio.certifications">
+<div class="cert-image-container">
+<img class="cert-image" ng-src="{{cert.image}}" alt="{{cert.title}}"/>
+</div>
+<div class="cert-content">
+<div class="cert-title">{{cert.title}}<span ng-if="cert.achievement">({{cert.achievement}})</span></div>
+<div class="cert-issuer">{{cert.issuer}}</div>
+<div class="cert-date">{{cert.date}}</div>
+<ul><li ng-repeat="detail in cert.details">{{detail}}</li></ul>
+</div>
+</div>
+</div>
+<hr class="my-4"/>
+</section>
+<!-- Skills Section -->
+<section ng-if="portfolio.skills">
+<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Skills</h2>
+<div class="skills-grid">
+<div class="skill-item" ng-repeat="skill in portfolio.skills">
+<div class="skill-header">
+<div class="skill-name">{{skill.name}}</div>
+<div class="skill-level">{{skill.level}}</div>
+</div>
+<div class="skill-bar">
+<div class="skill-progress" ng-class="skill.level.toLowerCase()"></div>
+</div>
+</div>
+</div>
+<hr class="my-4"/>
+</section>
+<!-- Education Section -->
+<section ng-if="portfolio.education">
+<h2 class="fadeInUp fw-bold position-relative pb-3 mb-4">Education</h2>
+<div class="education-grid">
+<div class="education-card" ng-repeat="edu in portfolio.education">
+<div class="education-logo" ng-if="edu.logo">
+<img ng-src="{{edu.logo}}" alt="{{edu.institution}}"/>
+</div>
+<div class="education-content">
+<div class="education-degree">{{edu.degree || edu.level}}</div>
+<div class="education-institution">{{edu.institution}}</div>
+<div class="education-date">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0z"/><path d="M4.285 12.433a.5.5 0 0 1-.57-.82l4.5-3.5a.5.5 0 0 1 .57 0l4.5 3.5a.5.5 0 0 1-.57.82L8 9.07l-3.715 2.863z"/></svg> {{edu.duration || edu.period}}
+</div>
+<div class="education-location" ng-if="edu.location">
+<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a5.53 5.53 0 0 0-5.5 5.5c0 3.038 5.5 10.5 5.5 10.5s5.5-7.462 5.5-10.5A5.53 5.53 0 0 0 8 0zM8 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg> {{edu.location}}
+</div>
+<ul><li ng-repeat="achievement in edu.achievements">{{achievement}}</li></ul>
+</div>
+</div>
+</div>
+<hr class="my-4"/>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="data.js"></script>
+<script>
+const app=angular.module("myApp",[]);app.controller("MainController",function($scope){$scope.portfolio=portfolioData;$scope.currentSlide=[];$scope.prevSlide=function(projectIndex){if(!$scope.currentSlide[projectIndex]){$scope.currentSlide[projectIndex]=0}$scope.currentSlide[projectIndex]=($scope.currentSlide[projectIndex]-1+$scope.portfolio.projects[projectIndex].images.length)%$scope.portfolio.projects[projectIndex].images.length};$scope.nextSlide=function(projectIndex,totalSlides){if(!$scope.currentSlide[projectIndex]){$scope.currentSlide[projectIndex]=0}$scope.currentSlide[projectIndex]=($scope.currentSlide[projectIndex]+1)%totalSlides};document.addEventListener("mousemove",(event)=>{const mouseX=(event.clientX/window.innerWidth)*100+"%";const mouseY=(event.clientY/window.innerHeight)*100+"%";document.documentElement.style.setProperty("--mouseX",mouseX);document.documentElement.style.setProperty("--mouseY",mouseY)})});
+</script>
+</body>
 </html>
