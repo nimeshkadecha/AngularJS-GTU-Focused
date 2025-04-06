@@ -1,0 +1,27 @@
+<html>  <head> </head>  <body>
+    <h1>Check Prime Number</h1>
+    <input type="number" id="numberInput" placeholder="Enter a number" />
+    <button id="checkBtn" onclick="displayResult()">Check</button>
+    <p id="resultText" style="display: none"></p>
+    <script> 
+      function isPrime(num) {
+        if (num <= 1) return false;
+        for (let i = 2; i * i <= num; i++) if (num % i === 0) return false;
+        return true;
+      }
+      let numberInput = document.getElementById("numberInput");
+      let resultText = document.getElementById("resultText");
+      numberInput.addEventListener("input", function () {
+        resultText.style.display = "none";
+        resultText.textContent = "";
+      });
+      function displayResult() {
+        let num = parseInt(numberInput.value);
+        if (isNaN(num)) resultText.textContent = "Please enter a valid number.";
+        else
+          resultText.textContent =
+            num +
+            (isPrime(num) ? " is a prime number." : " is not a prime number.");
+        resultText.style.display = "block";
+      }
+</script>  </body>   </html>
